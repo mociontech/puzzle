@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&display=swap');
+
+.romecabezas {
+  width: 100%;
+  height: 100%;
+  background: url("/jigsaw/fondo.png");
+  background-position: center;
+  background-size: contain;
+  position: fixed;
+  color: white;
+  font-family: 'Roboto Condensed', sans-serif;
+}
+
+h1, p {
+  text-align: center;
+  user-select: none;
+  margin: 0;
+}
+
+.inventario, .inv_oculto {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.inv_oculto {
+  height: 0;
+  width: 0;
+  overflow: hidden;
+}
+
+.puzzle {
+  width: 40vw;
+  height: 40vw;
+  border: 3px white solid;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+a {
+  text-decoration: none;
+  color: white;
+}
+
+.button {
+  background: #ff59d2;
+  padding: 10px 20px;
+  font-size: x-large;
+  border: 2px white solid;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background: #ff93e2;
+}
+
+.elegir {
+  height: 20vw;
+  border: 3px white solid;
+  border-radius: 20px;
+  overflow: auto;
+}
+
+.no_seleccionada {
+  opacity: 0.5;
+}
+
+.seleccionada {
+  filter: contrast(120%);
+}
+
+.elegir img {
+  width: 20vw;
+}
+
+.elegir img:hover {
+  opacity: 0.9;
+}
