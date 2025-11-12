@@ -1,0 +1,27 @@
+/* Contenedor */
+.jig-wrap { width: min(1700px, 92vw); margin: 0 auto; }
+
+/* Barra de controles */
+.pzl-toolbar{
+  display:flex; align-items:center; gap:12px; margin-bottom:8px;
+  font-weight:600;
+}
+.pzl-toolbar button{ padding:6px 12px; border:1px solid #222; border-radius:10px;
+  background:#111; color:#fff; cursor:pointer; }
+.pzl-toolbar button:hover{ background:#16181d; }
+
+/* SVG base */
+.jig { touch-action: none; display:block; width:100%; height:auto; }
+.jig > * { pointer-events: none; }   /* evita que el svg capture; sólo las piezas */
+.jig .jig-piece { pointer-events: all; cursor: grab; }
+.jig .jig-piece:active { cursor: grabbing; }
+
+/* Para asegurar que no aparezcan fondos extraños */
+.jig image { user-select:none; -webkit-user-drag: none; }
+
+/* (Opcional) sombras muy sutiles al levantar pieza – puedes comentar */
+.jig .jig-piece { filter: drop-shadow(0 1px 0 rgba(0,0,0,.25)); }
+
+
+
+
