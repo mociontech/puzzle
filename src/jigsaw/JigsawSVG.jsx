@@ -1,34 +1,30 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { generatePiecesClassic } from "./jigsawClassic"; // ← tu generador de piezas
+import { generatePiecesClassic } from "./jigsawClassic";
 import "./jigsaw.css";
 
-/** ===== Ajustes ===== */
-const SNAP_THRESH = 0.35;            // distancia (en celdas) para encajar
-const LOCK_ON_SNAP = false;          // true = bloquea la pieza al encajar
-const IMG_FIT = "cover";             // "cover" (sin bandas) | "contain" (toda la imagen)
+const SNAP_THRESH = 0.35;
+const LOCK_ON_SNAP = false;
+const IMG_FIT = "cover";
 const PRESERVE = IMG_FIT === "cover" ? "xMidYMid slice" : "xMidYMid meet";
 
-const BOARD_STROKE = "rgba(255,255,255,.55)"; // contorno tablero
-const BOARD_RADIUS = 0.28;                    // radio de borde redondeado tablero
+const BOARD_STROKE = "rgba(255,255,255,.55)";
+const BOARD_RADIUS = 0.28;
 
 export default function JigsawSVG({
   imageSrc,
-  rows = 3,          // ← cambia estos para dificultad
-  cols = 5,          // p.ej. rows=4, cols=6
+  rows = 3,
+  cols = 5,
   onSolved,
+  className = ""
 }) {
-  /** 1) Geometría de piezas clásicas */
   const base = useMemo(
-    // (rows, cols, radio-tabs, profundidad-tabs) – ajusta si quieres
     () => generatePiecesClassic(rows, cols, 0.16, 0.42),
     [rows, cols]
   );
 
-  /** 2) Estado */
   const [pieces, setPieces] = useState(() => scatter(base));
   const [moves, setMoves] = useState(0);
 
-  /** 3) Escala px->unidades para arrastre preciso */
   const svgRef = useRef(null);
   const scaleRef = useRef({ sx: 1, sy: 1 });
   useEffect(() => {
@@ -43,27 +39,14 @@ export default function JigsawSVG({
     return () => ro.disconnect();
   }, [cols, rows]);
 
-  /** 4) Solución */
   useEffect(() => {
     if (pieces.every(p => p.tx === 0 && p.ty === 0) && onSolved) onSolved();
   }, [pieces, onSolved]);
 
-  /** Ref de gesto para evitar dobles conteos */
-  const gestureRef = useRef({
-    active: false,
-    id: 0,
-    moved: false,
-    counted: false,
-    pointerId: null
-  });
-
   return (
-    <div className="jig-wrap">
+    <div className={className} style={{width:"100%", height:"100%"}}>
       <div className="pzl-toolbar" style={{ marginBottom: 8 }}>
-        <button
-          onClick={() => { setPieces(scatter(base)); setMoves(0); }}
-          className="btn btn-ghost"
-        >
+        <button onClick={() => { setPieces(scatter(base)); setMoves(0); }}>
           Mezclar
         </button>
         <span>Movimientos: {moves}</span>
@@ -74,21 +57,17 @@ export default function JigsawSVG({
         className="jig"
         viewBox={`0 0 ${cols} ${rows}`}
         width="100%"
-        height="auto"
+        height="100%"
         style={{ touchAction: "none" }}
         shapeRendering="geometricPrecision"
       >
-        {/* Clip global del tablero: evita ver “negro” fuera del borde */}
         <defs>
           <clipPath id="board-clip">
-            <rect
-              x="0" y="0" width={cols} height={rows}
-              rx={BOARD_RADIUS} ry={BOARD_RADIUS}
-            />
+            <rect x="0" y="0" width={cols} height={rows}
+                  rx={BOARD_RADIUS} ry={BOARD_RADIUS}/>
           </clipPath>
         </defs>
 
-        {/* Piezas dentro del rectángulo redondeado */}
         <g clipPath="url(#board-clip)">
           {pieces
             .slice()
@@ -103,12 +82,10 @@ export default function JigsawSVG({
                   onPointerDown={(e) => startDrag(e, p.r, p.c)}
                   pointerEvents="all"
                 >
-                  {/* máscara individual */}
                   <clipPath id={`clip-${id}`}>
                     <path d={p.d} />
                   </clipPath>
 
-                  {/* imagen recortada por la máscara */}
                   <image
                     href={imageSrc}
                     x={-p.c}
@@ -120,8 +97,6 @@ export default function JigsawSVG({
                     pointerEvents="all"
                     draggable="false"
                   />
-
-                  {/* borde de pieza */}
                   <path d={p.d} fill="none" stroke="rgba(0,0,0,.55)" strokeWidth={0.06}/>
                   <path d={p.d} fill="none" stroke="rgba(255,255,255,.45)" strokeWidth={0.02}/>
                 </g>
@@ -129,25 +104,18 @@ export default function JigsawSVG({
             })}
         </g>
 
-        {/* Contorno del tablero por encima */}
-        <rect
-          x="0" y="0" width={cols} height={rows}
-          rx={BOARD_RADIUS} ry={BOARD_RADIUS}
-          fill="none"
-          stroke={BOARD_STROKE}
-          strokeWidth="0.06"
-          pointerEvents="none"
-        />
+        <rect x="0" y="0" width={cols} height={rows}
+              rx={BOARD_RADIUS} ry={BOARD_RADIUS}
+              fill="none" stroke={BOARD_STROKE} strokeWidth="0.06"
+              pointerEvents="none"/>
       </svg>
     </div>
   );
 
-  /* ============ helpers ============ */
-
   function scatter(list) {
     return list.map((p, i) => ({
       ...p,
-      tx: (Math.random() * 1.8 - 0.9), // dispersión inicial
+      tx: (Math.random() * 1.8 - 0.9),
       ty: (Math.random() * 1.8 - 0.9),
       locked: false,
       z: i
@@ -162,50 +130,36 @@ export default function JigsawSVG({
     const cur = pieces.find(x => x.r === r && x.c === c);
     if (!target || !cur || (LOCK_ON_SNAP && cur.locked)) return;
 
-    // Traer al frente
     setPieces(ps => {
       const maxZ = Math.max(...ps.map(x => x.z));
       return ps.map(x => (x.r === r && x.c === c) ? { ...x, z: maxZ + 1 } : x);
     });
 
     const { sx, sy } = scaleRef.current;
-
-    // token único del gesto
-    const token = Date.now() + Math.random();
-    gestureRef.current = {
-      active: true,
-      id: token,
-      moved: false,
-      counted: false,
-      pointerId: e.pointerId
-    };
-
-    try { target.setPointerCapture(e.pointerId); } catch {}
+    target.setPointerCapture(e.pointerId);
 
     const start = { x: e.clientX, y: e.clientY };
     let initTx = cur.tx, initTy = cur.ty;
 
-    const MIN_MOVE = 0.02; // ~2% de una celda
+    const MIN_MOVE = 0.02;
+    let moved = false;
+    let finishedOnce = false;
+
     const onMove = (ev) => {
       ev.preventDefault();
       const dx = (ev.clientX - start.x) / sx;
       const dy = (ev.clientY - start.y) / sy;
-
-      if (!gestureRef.current.moved && Math.hypot(dx, dy) >= MIN_MOVE) {
-        gestureRef.current.moved = true;
-      }
-
+      if (!moved && Math.hypot(dx, dy) >= MIN_MOVE) moved = true;
       setPieces(ps => ps.map(x =>
         (x.r === r && x.c === c) ? { ...x, tx: initTx + dx, ty: initTy + dy } : x
       ));
     };
 
-    let finishedOnce = false;
     const finish = () => {
-      if (finishedOnce) return;             // anti pointerup + pointercancel
+      if (finishedOnce) return;
       finishedOnce = true;
 
-      try { target.releasePointerCapture(gestureRef.current.pointerId); } catch {}
+      try { target.releasePointerCapture(e.pointerId); } catch {}
       target.removeEventListener("pointermove", onMove);
       target.removeEventListener("pointerup", finish);
       target.removeEventListener("pointercancel", finish);
@@ -218,20 +172,11 @@ export default function JigsawSVG({
 
         const next = ps.map((x, i) => {
           if (i !== idx) return x;
-          if (snapped) {
-            return { ...x, tx: 0, ty: 0, locked: LOCK_ON_SNAP ? true : false };
-          }
+          if (snapped) return { ...x, tx: 0, ty: 0, locked: LOCK_ON_SNAP ? true : false };
           return x;
         });
 
-        // Contar exactamente 1 movimiento por gesto real
-        const g = gestureRef.current;
-        if (g.active && !g.counted && g.id === token && g.moved) {
-          setMoves(m => m + 1);
-          g.counted = true;
-        }
-        g.active = false;
-
+        if (moved) setMoves(m => m + 1);
         return next;
       });
     };

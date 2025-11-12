@@ -1,16 +1,17 @@
 import Header from "./Header";
 
 const items = [
-  { id: "esc1", name: "ARKANA HYBRID E-TECH", img: "/images/esc1.png" },
-  { id: "esc2", name: "KOLEOS FULL HYBRID E-TECH", img: "/images/esc2.png" },
-  { id: "esc3", name: "BOREAL", img: "/images/esc3.png" },
+  { id: "esc1", name: "RENAULT ARKANA HYBRID E-TECH", img: "/images/esc1.png" },
+  { id: "esc2", name: "RENAULT BOREAL", img: "/images/esc2.png" },
+  { id: "esc3", name: "RENAULT KOLEOS FULL HYBRID E-TECH", img: "/images/esc3.png" },
+
 ];
 
 export default function ScenarioSelect({ onPick, onBack }) {
   return (
     <div className="screen" style={{ gap: 16 }}>
       <Header showBack onBack={onBack} />
-      <h2 className="title">Selecciona tu puzzle</h2>
+      <h2 className="title">selecciona tu puzzle</h2>
 
       <div className="grid cols-3">
     {items.map(it => (

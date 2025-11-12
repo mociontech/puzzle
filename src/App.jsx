@@ -2,7 +2,7 @@ import { useState } from "react";
 import Splash from "./ui/Splash";
 import ScenarioSelect from "./ui/ScenarioSelect";
 import Puzzle20 from "./rompecabezas/Puzzle20";
-import JigsawSVG from "./jigsaw/JigsawSVG";           // <-- opción B
+import JigsawSVG from "./jigsaw/JigsawSVG";
 import Header from "./ui/Header";
 import "./ui/ui.css";
 
@@ -11,6 +11,10 @@ export default function App() {
   const [img, setImg] = useState("/images/esc1.jpg");
   const [lastMoves, setLastMoves] = useState(null);
   const [mode, setMode] = useState("grid");     // "grid" (A) | "jigsaw" (B)
+
+  // mismo layout para ambos modos
+  const ROWS = 3;
+  const COLS = 5;
 
   if (screen === "home") {
     return <Splash onStart={() => setScreen("select")} />;
@@ -29,7 +33,6 @@ export default function App() {
     );
   }
 
-  // PLAY
   return (
     <div className="game-wrap">
       <Header showBack onBack={() => setScreen("select")} />
@@ -46,12 +49,28 @@ export default function App() {
         >Modo B: Piezas</button>
       </div>
 
-      {/* Render según modo */}
-      {mode === "grid" ? (
-        <Puzzle20 image={img} width={1200} onWin={(moves) => setLastMoves(moves)} />
-      ) : (
-        <JigsawSVG imageSrc={img} rows={3} cols={5} onSolved={() => setLastMoves(0)} />
-      )}
+      {/* Marco único 16:9 para ambos modos */}
+      <div className="board">
+        {mode === "grid" ? (
+          // Opción A – llenando el marco
+          <Puzzle20
+            image={img}
+            rows={ROWS}
+            cols={COLS}
+            className="fill"
+            onWin={(moves) => setLastMoves(moves)}
+          />
+        ) : (
+          // Opción B – llenando el marco
+          <JigsawSVG
+            imageSrc={img}
+            rows={ROWS}
+            cols={COLS}
+            className="fill"
+            onSolved={() => setLastMoves(0)}
+          />
+        )}
+      </div>
 
       {lastMoves != null && (
         <div className="pzl-overlay">
@@ -74,8 +93,3 @@ export default function App() {
     </div>
   );
 }
-
-
-
-
-
