@@ -1,3 +1,4 @@
+// src/App.jsx
 import { useState } from "react";
 import Splash from "./ui/Splash";
 import ScenarioSelect from "./ui/ScenarioSelect";
@@ -7,12 +8,11 @@ import Header from "./ui/Header";
 import "./ui/ui.css";
 
 export default function App() {
-  const [screen, setScreen] = useState("home"); // home | select | play
+  const [screen, setScreen] = useState("home");  // home | select | play
   const [img, setImg] = useState("/images/esc1.jpg");
-  const [lastMoves, setLastMoves] = useState(null);
-  const [mode, setMode] = useState("grid");     // "grid" (A) | "jigsaw" (B)
+  const [lastMoves, setLastMoves] = useState(null); // <- se usa para A y B
+  const [mode, setMode] = useState("grid");         // "grid" (A) | "jigsaw" (B)
 
-  // mismo layout para ambos modos
   const ROWS = 3;
   const COLS = 5;
 
@@ -25,7 +25,7 @@ export default function App() {
       <ScenarioSelect
         onPick={(picked) => {
           setImg(picked);
-          setLastMoves(null);
+          setLastMoves(null);     // reset marcador al cambiar imagen
           setScreen("play");
         }}
         onBack={() => setScreen("home")}
@@ -35,55 +35,53 @@ export default function App() {
 
   return (
     <div className="game-wrap">
-      <Header showBack onBack={() => setScreen("select")} />
+      <Header showBack onBack={() => { setScreen("select"); setLastMoves(null); }} />
 
       {/* Toggle de modo A/B */}
       <div style={{display:"flex",justifyContent:"center",gap:12,margin:"4px 0 12px"}}>
         <button
           className={`btn ${mode==="grid"?"btn-primary":"btn-ghost"}`}
-          onClick={()=>setMode("grid")}
+          onClick={()=>{ setMode("grid"); setLastMoves(null); }}
         >Modo A: Cuadrícula</button>
         <button
           className={`btn ${mode==="jigsaw"?"btn-primary":"btn-ghost"}`}
-          onClick={()=>setMode("jigsaw")}
+          onClick={()=>{ setMode("jigsaw"); setLastMoves(null); }}
         >Modo B: Piezas</button>
       </div>
 
-      {/* Marco único 16:9 para ambos modos */}
+      {/* Marco 16:9 */}
       <div className="board">
         {mode === "grid" ? (
-          // Opción A – llenando el marco
           <Puzzle20
             image={img}
             rows={ROWS}
             cols={COLS}
             className="fill"
-            onWin={(moves) => setLastMoves(moves)}
+            onWin={(moves) => setLastMoves(moves)}     // ← A manda total
           />
         ) : (
-          // Opción B – llenando el marco
           <JigsawSVG
             imageSrc={img}
             rows={ROWS}
             cols={COLS}
-            className="fill"
-            onSolved={() => setLastMoves(0)}
+            onSolved={(totalMoves) => setLastMoves(totalMoves)} // ← B manda total
           />
         )}
       </div>
 
+      {/* Overlay único para A y B */}
       {lastMoves != null && (
         <div className="pzl-overlay">
           <div className="pzl-card">
             <h2>¡Puzzle completado! 🎉</h2>
-            {mode==="grid" && (
-              <div className="subtle">Movimientos: <b>{lastMoves}</b></div>
-            )}
+            <div className="subtle">Movimientos: <b>{lastMoves}</b></div>
             <div style={{ display:"flex", gap:10, justifyContent:"center", marginTop:10 }}>
-              <button className="btn btn-primary" onClick={() => setScreen("home")}>
+              <button className="btn btn-primary"
+                      onClick={() => { setScreen("home"); setLastMoves(null); }}>
                 Volver al Inicio
               </button>
-              <button className="btn btn-ghost" onClick={() => setScreen("select")}>
+              <button className="btn btn-ghost"
+                      onClick={() => { setScreen("select"); setLastMoves(null); }}>
                 Elegir otro puzzle
               </button>
             </div>
