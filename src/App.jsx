@@ -73,7 +73,7 @@ export default function App() {
       {lastMoves != null && (
         <div className="pzl-overlay">
           <div className="pzl-card">
-            <h2>¡Puzzle completado! 🎉</h2>
+            <h2>¡Rompecabezas completado! 🎉</h2>
             <div className="subtle">Movimientos: <b>{lastMoves}</b></div>
             <div style={{ display:"flex", gap:10, justifyContent:"center", marginTop:10 }}>
               <button className="btn btn-primary"

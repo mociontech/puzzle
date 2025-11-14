@@ -10,7 +10,7 @@
    return (
      <div className="screen" style={{ gap: 16 }}>
        <Header showBack onBack={onBack} />
-     <h2 className="title font-bold">selecciona tu puzzle</h2> {/* <- Bold */}
+     <h2 className="title font-bold">selecciona tu rompecabezas</h2> {/* <- Bold */}
 
        <div className="grid cols-3">
          {items.map(it => (
