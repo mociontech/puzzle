@@ -13,7 +13,7 @@
      <h2 className="title font-bold">selecciona tu rompecabezas</h2> {/* <- Bold */}
 
        <div className="grid cols-3">
-         {items.map(it => (
+         {items.map(it => ( 
            <button key={it.id} className="card" onClick={() => onPick(it.img)}>
              <div className="thumb">
                <img src={it.img} alt={it.name} />
