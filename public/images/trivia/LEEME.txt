@@ -1,0 +1,6 @@
+Estas seis imágenes JPG son las fotos OFICIALES del cliente, descargadas de los
+enlaces Box del correo (ver boxUrl en src/trivia/triviaData.js) y convertidas a
+JPG sRGB de máximo 1600 px en su lado mayor, sin recortes (se muestran completas
+con object-fit: contain).
+
+Las versiones recortadas a 16:9 para el rompecabezas están en public/images/puzzle/.

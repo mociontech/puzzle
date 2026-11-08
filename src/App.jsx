@@ -1,89 +1,75 @@
-// src/App.jsx
-import { useState } from "react";
-import Splash from "./ui/Splash";
-import ScenarioSelect from "./ui/ScenarioSelect";
-import Puzzle20 from "./rompecabezas/Puzzle20";
-import JigsawSVG from "./jigsaw/JigsawSVG";
-import Header from "./ui/Header";
-import "./ui/ui.css";
+// Navegación de la experiencia Renault: Puzzle existente + nueva trivia.
+import { useState } from 'react';
+import Splash from './ui/Splash';
+import ScenarioSelect from './ui/ScenarioSelect';
+import Puzzle20 from './rompecabezas/Puzzle20';
+import JigsawSVG from './jigsaw/JigsawSVG';
+import Header from './ui/Header';
+import Trivia from './trivia/Trivia';
+import './ui/ui.css';
 
 export default function App() {
-  const [screen, setScreen] = useState("home");  // home | select | play
-  const [img, setImg] = useState("/images/esc1.jpg");
-  const [lastMoves, setLastMoves] = useState(null); // <- se usa para A y B
-  const [mode, setMode] = useState("grid");         // "grid" (A) | "jigsaw" (B)
-
+  const [screen, setScreen] = useState('home'); // home | select | play | trivia
+  const [triviaSession, setTriviaSession] = useState(0);
+  const [img, setImg] = useState('/images/esc1.png');
+  const [lastMoves, setLastMoves] = useState(null);
+  const [mode, setMode] = useState('grid');
   const ROWS = 3;
   const COLS = 5;
 
-  if (screen === "home") {
-    return <Splash onStart={() => setScreen("select")} />;
+  function openTrivia() {
+    setTriviaSession((session) => session + 1);
+    setScreen('trivia');
   }
 
-  if (screen === "select") {
+  if (screen === 'home') {
+    return <Splash onTrivia={openTrivia} onPuzzle={() => setScreen('select')} />;
+  }
+  if (screen === 'trivia') {
+    return <Trivia key={triviaSession} onExit={() => setScreen('home')} />;
+  }
+  if (screen === 'select') {
     return (
       <ScenarioSelect
         onPick={(picked) => {
           setImg(picked);
-          setLastMoves(null);     // reset marcador al cambiar imagen
-          setScreen("play");
+          setLastMoves(null);
+          setScreen('play');
         }}
-        onBack={() => setScreen("home")}
+        onBack={() => setScreen('home')}
       />
     );
   }
 
+  // Todo el flujo del puzzle se conserva sin cambiar sus reglas.
   return (
     <div className="game-wrap">
-      <Header showBack onBack={() => { setScreen("select"); setLastMoves(null); }} />
-
-      {/* Toggle de modo A/B */}
-      <div style={{display:"flex",justifyContent:"center",gap:12,margin:"4px 0 12px"}}>
-        <button
-          className={`btn ${mode==="grid"?"btn-primary":"btn-ghost"}`}
-          onClick={()=>{ setMode("grid"); setLastMoves(null); }}
-        >Modo A: Cuadrícula</button>
-        <button
-          className={`btn ${mode==="jigsaw"?"btn-primary":"btn-ghost"}`}
-          onClick={()=>{ setMode("jigsaw"); setLastMoves(null); }}
-        >Modo B: Piezas</button>
+      <Header showBack onBack={() => { setScreen('select'); setLastMoves(null); }} />
+      <div style={{ display: 'flex', justifyContent: 'center', gap: 12, margin: '4px 0 12px' }}>
+        <button className={`btn ${mode === 'grid' ? 'btn-primary' : 'btn-ghost'}`}
+          onClick={() => { setMode('grid'); setLastMoves(null); }}>Modo A: Cuadrícula</button>
+        <button className={`btn ${mode === 'jigsaw' ? 'btn-primary' : 'btn-ghost'}`}
+          onClick={() => { setMode('jigsaw'); setLastMoves(null); }}>Modo B: Piezas</button>
       </div>
-
-      {/* Marco 16:9 */}
       <div className="board">
-        {mode === "grid" ? (
-          <Puzzle20
-            image={img}
-            rows={ROWS}
-            cols={COLS}
-            className="fill"
-            onWin={(moves) => setLastMoves(moves)}     // ← A manda total
-          />
+        {mode === 'grid' ? (
+          <Puzzle20 image={img} rows={ROWS} cols={COLS} className="fill"
+            onWin={(moves) => setLastMoves(moves)} />
         ) : (
-          <JigsawSVG
-            imageSrc={img}
-            rows={ROWS}
-            cols={COLS}
-            onSolved={(totalMoves) => setLastMoves(totalMoves)} // ← B manda total
-          />
+          <JigsawSVG imageSrc={img} rows={ROWS} cols={COLS}
+            onSolved={(totalMoves) => setLastMoves(totalMoves)} />
         )}
       </div>
-
-      {/* Overlay único para A y B */}
       {lastMoves != null && (
         <div className="pzl-overlay">
           <div className="pzl-card">
             <h2>¡Rompecabezas completado! 🎉</h2>
             <div className="subtle">Movimientos: <b>{lastMoves}</b></div>
-            <div style={{ display:"flex", gap:10, justifyContent:"center", marginTop:10 }}>
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginTop: 10 }}>
               <button className="btn btn-primary"
-                      onClick={() => { setScreen("home"); setLastMoves(null); }}>
-                Volver al Inicio
-              </button>
+                onClick={() => { setScreen('home'); setLastMoves(null); }}>Volver al inicio</button>
               <button className="btn btn-ghost"
-                      onClick={() => { setScreen("select"); setLastMoves(null); }}>
-                Elegir otro puzzle
-              </button>
+                onClick={() => { setScreen('select'); setLastMoves(null); }}>Elegir otro puzzle</button>
             </div>
           </div>
         </div>

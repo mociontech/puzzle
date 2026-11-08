@@ -1,0 +1,130 @@
+/* Trivia. NouvelR de la instalación original + guía digital Renault 2025. */
+.trv-app { --trv-yellow:#efdf00; --trv-black:#000; --trv-grey:#656666; background:#fff; color:#000; min-height:100vh;min-height:100dvh; display:flex;flex-direction:column;font-family:"NouvelR",sans-serif;overflow-x:hidden; }
+.trv-app *{box-sizing:border-box;}
+.trv-app button{font-family:inherit;cursor:pointer;}
+.trv-header{height:90px;flex:none;background:#000;color:#fff;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 clamp(24px,4vw,72px);}
+.trv-nav-back,.trv-menu{background:none;color:#fff;border:none;font-weight:700;font-size:12px;letter-spacing:.09em;padding:15px 0;}
+.trv-nav-back{justify-self:start;display:flex;align-items:center;gap:10px;font-size:22px;}.trv-nav-back span{font-size:12px;}
+.trv-menu{justify-self:end;}.trv-menu span{font-size:20px;vertical-align:middle;margin-left:7px;}
+.trv-brand{display:flex;align-items:center;gap:14px;font-weight:700;letter-spacing:.12em;font-size:11px;white-space:nowrap;}
+.trv-brand img{width:44px;height:56px;object-fit:contain;}
+.trv-bottomline{height:45px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(24px,4vw,72px);font-size:10px;font-weight:700;letter-spacing:.14em;background:#fff;color:#000;border-top:1px solid #e2e2e2;}
+.trv-kicker{display:flex;align-items:center;gap:12px;letter-spacing:.12em;font-size:12px;font-weight:700;}
+.trv-kicker-line{display:inline-block;width:30px;height:5px;background:var(--trv-yellow);}
+.trv-cta{display:inline-flex;align-items:center;justify-content:space-between;gap:26px;background:var(--trv-yellow);color:#000;min-height:66px;padding:0 27px;border:2px solid var(--trv-yellow);font-size:15px;font-weight:700;letter-spacing:.06em;transition:background .15s;}
+.trv-cta:hover,.trv-cta:focus-visible{background:#f8eb4c;}
+.trv-cta span{font-size:26px;line-height:1;}
+.trv-intro{flex:1;display:grid;grid-template-columns: minmax(0,.9fr) minmax(0,1.1fr);min-height:0;}
+.trv-intro-content{align-self:center;padding:40px clamp(28px,5vw,98px);}
+.trv-intro-content h1{margin:30px 0 25px;font-size:clamp(45px,5vw,88px);line-height:.99;letter-spacing:-.048em;font-weight:700;}
+.trv-intro-content h1 span{color:#decc00;}
+.trv-intro-content p{font-size:clamp(17px,1.35vw,22px);line-height:1.43;max-width:570px;color:#525252;margin:0 0 35px;}
+.trv-metrics{display:flex;flex-wrap:wrap;gap:22px;margin:0 0 43px;}
+.trv-metrics span{display:flex;flex-direction:column;gap:5px;font-size:11px;letter-spacing:.14em;font-weight:700;border-left:2px solid #dedede;padding-left:13px;}
+.trv-metrics strong{font-size:28px;letter-spacing:-.03em;}
+.trv-helper{font-size:13px;color:#656666;margin-top:18px;}
+/* Galería: las seis fotos completas (object-fit: contain), sin recortes ni inclinación. */
+.trv-intro-visual{position:relative;background:#f3f3f1;border-left:1px solid #e4e4e2;height:calc(100vh - 135px);height:calc(100dvh - 135px);min-height:520px;display:flex;flex-direction:column;padding:clamp(16px,1.8vw,30px);}
+.trv-gallery-head{flex:none;display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;font-size:11px;font-weight:700;letter-spacing:.14em;color:#333;}
+.trv-gallery{flex:1;min-height:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:clamp(8px,1vw,14px);}
+.trv-gallery-card{display:flex;flex-direction:column;min-height:0;background:#fff;border:1px solid #e3e3e1;padding:0;text-align:left;color:#000;cursor:pointer;transition:border-color .2s,transform .2s;}
+.trv-gallery-card:hover,.trv-gallery-card:focus-visible{border-color:#000;transform:translateY(-2px);outline:none;}
+.trv-gallery-photo{position:relative;flex:1;min-height:0;padding:6px;display:flex;align-items:center;justify-content:center;}
+.trv-gallery-photo img{width:100%;height:100%;display:block;object-fit:contain;}
+.trv-gallery-zoom{position:absolute;right:10px;top:10px;width:30px;height:30px;display:grid;place-items:center;background:#000;color:#fff;font-style:normal;font-size:18px;line-height:1;opacity:.85;}
+.trv-gallery-card:hover .trv-gallery-zoom{background:#efdf00;color:#000;opacity:1;}
+.trv-gallery-label{flex:none;padding:9px 12px;border-top:1px solid #ececea;color:#000;font-weight:700;font-size:10px;letter-spacing:.08em;line-height:1.3;}
+
+/* ===== Visor a pantalla completa con zoom ===== */
+.trv-viewer{position:fixed;inset:0;z-index:50;background:#0b0b0b;color:#fff;display:flex;flex-direction:column;font-family:"NouvelR",sans-serif;}
+.trv-viewer *{box-sizing:border-box;}
+.trv-viewer button{font-family:inherit;cursor:pointer;}
+.trv-viewer button:disabled{opacity:.35;cursor:default;}
+.trv-viewer-top{height:90px;flex:none;background:#000;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 clamp(24px,4vw,72px);}
+.trv-viewer-close{justify-self:end;background:none;border:none;color:#fff;font-weight:700;font-size:12px;letter-spacing:.09em;padding:15px 0;}
+.trv-viewer-close span{font-size:16px;margin-left:8px;vertical-align:middle;}
+.trv-viewer-stage{flex:1;min-height:0;position:relative;overflow:hidden;touch-action:none;display:flex;align-items:center;justify-content:center;padding:clamp(12px,2vw,32px);cursor:zoom-in;background:radial-gradient(ellipse at center,#1a1a1a 0%,#0b0b0b 70%);}
+.trv-viewer-stage.is-zoomed{cursor:grab;}
+.trv-viewer-stage img{max-width:100%;max-height:100%;width:auto;height:auto;display:block;object-fit:contain;transform-origin:center center;user-select:none;-webkit-user-drag:none;pointer-events:none;transition:transform .08s linear;}
+.trv-viewer-nav{position:absolute;top:50%;transform:translateY(-50%);width:56px;height:56px;border:0;background:#fff;color:#000;font-size:34px;line-height:1;display:grid;place-items:center;padding:0 0 4px;transition:background .15s;}
+.trv-viewer-nav:hover{background:#efdf00;}
+.trv-viewer-nav--prev{left:clamp(12px,2vw,32px);}.trv-viewer-nav--next{right:clamp(12px,2vw,32px);}
+.trv-viewer-bottom{flex:none;display:flex;justify-content:space-between;align-items:center;gap:20px;padding:16px clamp(24px,4vw,72px);background:#000;border-top:1px solid #222;}
+.trv-viewer-name{display:flex;flex-direction:column;gap:8px;min-width:0;}
+.trv-viewer-name strong{font-size:clamp(16px,1.6vw,24px);letter-spacing:-.02em;line-height:1.1;}
+.trv-viewer-zoom{display:flex;align-items:center;gap:8px;flex:none;}
+.trv-viewer-zoom button{width:48px;height:48px;border:0;background:#fff;color:#000;font-size:24px;font-weight:700;line-height:1;}
+.trv-viewer-zoom button:hover:not(:disabled){background:#efdf00;}
+.trv-viewer-zoom .trv-viewer-reset{width:auto;padding:0 16px;font-size:12px;letter-spacing:.08em;}
+.trv-viewer-level{min-width:56px;text-align:center;font-weight:700;font-size:13px;letter-spacing:.06em;}
+.trv-question-shell{flex:1;display:grid;grid-template-columns:minmax(310px,.86fr) minmax(0,1.25fr);min-height:0;}
+.trv-question-left{position:relative;overflow:hidden;min-height:500px;background:#efdf00;padding:clamp(36px,5.6vw,98px) clamp(24px,5vw,85px);display:flex;flex-direction:column;isolation:isolate;}
+.trv-question-left .trv-kicker-line{background:#000;}
+.trv-question-count{margin-top:clamp(42px,9vh,110px);display:flex;align-items:baseline;gap:15px;line-height:1;}
+.trv-question-count strong{font-size:clamp(100px,11vw,180px);letter-spacing:-.095em;}
+.trv-question-count span{font-size:25px;font-weight:700;}
+.trv-question-left h1{font-size:clamp(33px,3.7vw,64px);letter-spacing:-.04em;line-height:1.04;margin:26px 0 30px;}
+.trv-question-left h1 em{font-style:normal;}
+.trv-progress{display:flex;gap:9px;max-width:350px;width:100%;margin-top:auto;}
+.trv-progress span{height:8px;background:#0003;flex:1;}.trv-progress .active{background:#000;}
+.trv-question-sidebar-note{margin-top:20px;font-size:11px;font-weight:700;letter-spacing:.06em;line-height:1.6;}
+/* Logo Renault original como marca de agua (negro al 8%) */
+.trv-geo{position:absolute;z-index:-1;right:-4%;top:10%;width:clamp(340px,32vw,560px);height:auto;opacity:.08;filter:brightness(0);pointer-events:none;}
+.trv-question-panel{align-self:center;width:100%;max-width:1050px;padding:28px clamp(26px,5vw,94px);}
+.trv-question-overline{color:#333;font-size:12px;font-weight:700;letter-spacing:.16em;}.trv-question-overline span{color:#888;}
+.trv-question-panel h2{font-size:clamp(30px,3.2vw,55px);line-height:1.1;letter-spacing:-.028em;margin:22px 0 clamp(22px,4.8vh,50px);max-width:850px;}
+.trv-options{display:grid;gap:12px;}
+.trv-option{min-height:clamp(72px,9.6vh,110px);width:100%;background:#f5f5f4;color:#000;border:2px solid transparent;display:grid;grid-template-columns:48px 1fr 29px;align-items:center;gap:16px;text-align:left;padding:14px clamp(16px,2vw,30px);transition:background .15s,border-color .15s;}
+.trv-option:hover,.trv-option:focus-visible,.trv-option--selected{background:#fffbea;border-color:#000;}
+.trv-option-letter{display:grid;place-items:center;width:43px;height:43px;background:#000;color:#fff;font-size:18px;font-weight:700;}
+.trv-option-label{font-size:clamp(16px,1.35vw,21px);line-height:1.32;font-weight:400;}
+.trv-option-arrow{font-size:23px;justify-self:end;}
+.trv-question-footer{margin-top:30px;display:flex;justify-content:space-between;align-items:center;color:#777;font-size:11px;letter-spacing:.12em;font-weight:700;}.trv-question-footer span{color:#000;font-size:26px;}
+.trv-result{flex:1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);min-height:0;}
+/* Resultado: foto completa del vehículo (object-fit: contain), sin recortes. */
+.trv-result-image{position:relative;height:calc(100vh - 135px);height:calc(100dvh - 135px);min-height:520px;background:#f3f3f1;border:0;border-right:1px solid #e4e4e2;display:flex;align-items:center;justify-content:center;padding:clamp(24px,3vw,56px) clamp(24px,3vw,56px) 78px;cursor:zoom-in;width:100%;}
+.trv-result-image img{width:100%;height:100%;display:block;object-fit:contain;}
+.trv-result-image-label{position:absolute;z-index:1;left:clamp(28px,4vw,70px);bottom:36px;color:#000;letter-spacing:.14em;font-weight:700;font-size:12px;display:flex;align-items:center;gap:12px;}
+.trv-result-image-label::before{content:'';display:inline-block;width:30px;height:5px;background:#efdf00;}
+.trv-result-image-zoom{position:absolute;z-index:1;right:clamp(28px,4vw,70px);bottom:30px;display:inline-flex;align-items:center;gap:8px;background:#000;color:#fff;font-weight:700;font-size:11px;letter-spacing:.1em;padding:9px 12px;}
+.trv-result-image-zoom i{font-style:normal;font-size:16px;line-height:1;}
+.trv-result-image:hover .trv-result-image-zoom{background:#efdf00;color:#000;}
+.trv-result-info{align-self:center;max-width:850px;padding:40px clamp(35px,5vw,95px);}
+.trv-result-overline{display:block;margin:clamp(30px,6vh,65px) 0 15px;font-size:13px;font-weight:700;letter-spacing:.12em;}
+.trv-result-info h1{font-size:clamp(32px,3.3vw,59px);line-height:1;letter-spacing:-.045em;margin:0 0 20px;}
+.trv-result-profile{display:inline-flex;background:#efdf00;padding:9px 12px;font-size:12px;font-weight:700;letter-spacing:.06em;}
+.trv-result-info h2{font-size:clamp(20px,1.85vw,29px);margin:28px 0 14px;}
+.trv-result-info p{font-size:clamp(16px,1.16vw,20px);line-height:1.5;color:#494949;margin:0 0 35px;}
+.trv-result-actions{display:flex;gap:12px;flex-wrap:wrap;}
+.trv-outline{min-height:66px;border:2px solid #000;background:#fff;color:#000;font-size:14px;letter-spacing:.05em;font-weight:700;padding:0 24px;}
+.trv-outline:hover,.trv-outline:focus-visible{background:#f5f5f5;}
+.trv-original-link{display:inline-block;color:#444;font-size:12px;font-weight:700;text-underline-offset:4px;letter-spacing:.06em;margin-top:27px;}
+@media(max-width:1050px){
+ .trv-intro{grid-template-columns:1fr;}.trv-intro-content{padding:46px 40px;}
+ .trv-intro-visual{min-height:0;height:540px;border-left:0;border-top:1px solid #e4e4e2;}
+ .trv-gallery{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));}
+ .trv-question-shell{grid-template-columns:1fr;}.trv-question-left{min-height:0;padding:28px 40px;}
+ .trv-question-count{margin-top:20px;}.trv-question-count strong{font-size:90px;}
+ .trv-question-left h1{margin:6px 0 20px;font-size:35px;}.trv-progress{margin-top:8px;}
+ .trv-question-sidebar-note{display:none;}.trv-geo{right:-6%;top:-10%;width:280px;}
+ .trv-question-panel{padding:36px 40px;}.trv-option{min-height:75px;}
+ .trv-result{grid-template-columns:1fr;}.trv-result-image{min-height:0;height:min(58vh,620px);border-right:0;border-bottom:1px solid #e4e4e2;}.trv-result-info{padding:42px 40px;}
+}
+@media(max-width:600px){
+ .trv-header{height:68px;padding:0 16px;}.trv-brand img{width:31px;height:39px;}.trv-brand span{font-size:8px;letter-spacing:.04em;}
+ .trv-menu{font-size:10px;}.trv-nav-back{gap:4px;font-size:20px;}.trv-nav-back span{font-size:9px;}
+ .trv-bottomline{padding:0 20px;font-size:9px;}
+ .trv-intro-content{padding:40px 24px;}.trv-intro-content h1{font-size:clamp(39px,11.5vw,66px);}
+ .trv-intro-content p{font-size:16px;margin-bottom:25px;}.trv-metrics{gap:14px;margin-bottom:28px;}.trv-metrics strong{font-size:24px;}
+ .trv-intro-visual{height:auto;padding:16px;}.trv-gallery{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:none;grid-auto-rows:150px;}.trv-gallery-label{font-size:8px;padding:7px 8px;}
+ .trv-viewer-top{height:68px;padding:0 16px;}.trv-viewer-nav{width:44px;height:44px;font-size:28px;}
+ .trv-viewer-bottom{flex-direction:column;align-items:stretch;gap:12px;padding:12px 16px;}.trv-viewer-zoom{justify-content:center;}.trv-viewer-zoom button{width:44px;height:44px;}
+ .trv-result-image-zoom{right:16px;bottom:16px;font-size:9px;padding:7px 9px;}
+ .trv-question-left{padding:25px 24px;}.trv-question-count strong{font-size:70px;}.trv-question-count span{font-size:16px;}
+ .trv-question-left h1{font-size:32px;}.trv-question-panel{padding:30px 20px;}.trv-question-panel h2{font-size:29px;}
+ .trv-options{gap:9px;}.trv-option{grid-template-columns:36px 1fr 19px;gap:9px;padding:12px;min-height:78px;}
+ .trv-option-letter{width:35px;height:35px;font-size:16px;}.trv-option-label{font-size:15px;}.trv-option-arrow{font-size:17px;}
+ .trv-result-image{height:320px;padding:16px 16px 60px;}.trv-result-image-label{left:16px;bottom:20px;font-size:10px;}.trv-result-info{padding:32px 24px;}.trv-result-info h1{font-size:35px;}
+ .trv-result-actions{flex-direction:column;}.trv-cta,.trv-outline{min-height:58px;}
+}
+@media(prefers-reduced-motion:reduce){.trv-option,.trv-cta{transition:none;}}
