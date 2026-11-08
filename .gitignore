@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# Secretos y estado local de Netlify (el token de Evius nunca va al repositorio)
+.env
+.netlify
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

@@ -22,7 +22,7 @@ export default function ScenarioSelect({ onPick, onBack }) {
 
       <div className="grid cols-4">
         {items.map((it, index) => (
-          <button key={it.id} className="card" onClick={() => onPick(it.img)}>
+          <button key={it.id} className="card" onClick={() => onPick(it.img, it.name)}>
             <div className="thumb">
               <img src={it.img} alt={it.name} />
               <span className="card-index">{String(index + 1).padStart(2, "0")}</span>

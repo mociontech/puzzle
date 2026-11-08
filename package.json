@@ -8,7 +8,11 @@
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "test:trivia": "node --test tests/trivia.test.mjs"
+    "test:trivia": "node --test tests/trivia.test.mjs",
+    "evius:off": "node scripts/test-evius-function.mjs",
+    "evius:ping": "node scripts/test-evius-function.mjs --ping",
+    "evius:live": "node scripts/test-evius-function.mjs --live",
+    "functions": "npx netlify-cli functions:serve --port 9999"
   },
   "dependencies": {
     "firebase": "^10.8.0",

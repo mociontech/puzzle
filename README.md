@@ -72,6 +72,17 @@ Fuente: `Propuesta de trivia Renault (2).pdf` (páginas 2–7).
 
 No hay un formulario de captura de datos personales ni persistencia de las respuestas; el flujo es completamente local.
 
+## Envío de datos a Evius (Datahub)
+
+Cada **puzzle completado** se envía a Evius para saber cuántas personas usaron el rompecabezas. La trivia todavía no envía nada (pendiente).
+
+- **Qué se envía:** al completar un puzzle (Modo A o B) se registra una participación con `score` (100 por defecto, `EVIUS_SCORE_PER_COMPLETION`), modelo elegido, modo, movimientos, duración y hora. Antes se registra el asistente.
+- **Persona anónima:** el puzzle no pide datos, así que cada sesión (desde que se toca PUZZLE hasta volver al inicio) se identifica con un correo sintético `anon-<sessionId>@puzzle-renault.local` y nombre "Participante anónimo". Evius deduplica asistentes por correo: `/attendees` cuenta personas y `/experiences` cuenta partidas. **Quien administra Evius debe aprobar este esquema antes de producción.**
+- **Cómo:** el navegador nunca habla con Evius ni conoce el token. `src/evius/tracker.js` guarda cada partida en una cola en `localStorage` y la envía en segundo plano a `netlify/functions/evius.mjs`, que valida, limpia y llama a `POST /attendees` y `POST /experiences` con `Idempotency-Key`. Si falla, reintenta con espera creciente (1, 2, 4, 8, 16, 30 min); un 401 (token vencido) deja de insistir y avisa en consola.
+- **Variables (solo servidor, Netlify > Environment variables):** ver `.env.example`. Solo se envía cuando `EVIUS_MODE=live`. En Netlify marcar como secreta únicamente `EVIUS_TOKEN`.
+- **Pruebas:** `npm run evius:off` (valida sin enviar), `npm run evius:ping` (confirma token/URL/evento sin escribir), `npm run evius:live` (envía UN registro marcado "PRUEBA borrar"). Abrir la app con `?prueba` en la URL marca las partidas como PRUEBA.
+- **Desarrollo local:** `npm run functions` (levanta la función en el puerto 9999 con el `.env`) y `npm run dev` (Vite hace proxy de `/.netlify/functions`).
+
 ## Archivos principales
 
 - `src/App.jsx`: menú y rutas internas, sin agregar React Router.
@@ -80,6 +91,7 @@ No hay un formulario de captura de datos personales ni persistencia de las respu
 - `src/trivia/triviaData.js`: cinco preguntas, seis modelos, fuentes Box y algoritmo.
 - `src/trivia/trivia.css`: diseño visual y adaptación a tablets.
 - `tests/trivia.test.mjs`: prueba las 1024 combinaciones posibles, puntajes, seis resultados, desempates, recursos de foto.
+- `src/evius/tracker.js` y `netlify/functions/evius.mjs`: cola local y función servidor que envía a Evius (ver sección Evius).
 
 ## Recomendaciones para el evento
 
