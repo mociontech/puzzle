@@ -59,13 +59,27 @@ function validate(raw) {
 const email = r => `${r.test ? 'prueba' : 'anon'}-${r.sessionId.toLowerCase()}@${KINDS[r.kind].domain}`;
 const fullName = r => r.test ? 'PRUEBA borrar - Participante anónimo' : 'Participante anónimo';
 const attendee = r => ({ email: email(r), fullName: fullName(r), participantId: r.sessionId, company: KINDS[r.kind].name });
+// Los datos propios van en el nivel superior Y dentro de `data`, que es el objeto que usa el ejemplo oficial
+// del Datahub (data: { level, time }) y donde Evius los conserva para "Ver detalles" / exportaciones.
 function experience(r, score) {
   const common = { email: email(r), fullName: fullName(r), participantId: r.sessionId, participationId: r.id,
-    experience: KINDS[r.kind].name, play_timestamp: r.at, score, completed: true, durationMs: r.durationMs, startedAt: r.startedAt };
-  if (r.kind === 'puzzle') return { ...common, model: r.model, mode: r.mode === 'grid' ? 'Modo A: Cuadrícula' : 'Modo B: Piezas', moves: r.moves };
-  return { ...common, result: r.resultName, resultId: r.result, answers: r.answers.join(''),
-    q1: r.answers[0], q2: r.answers[1], q3: r.answers[2], q4: r.answers[3], q5: r.answers[4], points: r.points };
+    experience: KINDS[r.kind].name, play_timestamp: r.at, score, bonusScore: 0 };
+  const extra = r.kind === 'puzzle'
+    ? { completed: true, model: r.model, mode: r.mode === 'grid' ? 'Modo A: Cuadrícula' : 'Modo B: Piezas', moves: r.moves,
+        durationMs: r.durationMs, startedAt: r.startedAt }
+    : { completed: true, result: r.resultName, resultId: r.result, answers: r.answers.join(''),
+        q1: r.answers[0], q2: r.answers[1], q3: r.answers[2], q4: r.answers[3], q5: r.answers[4], points: r.points,
+        durationMs: r.durationMs, startedAt: r.startedAt };
+  return { ...common, ...extra, data: extra };
 }
+
+// Experiencia Evius destino. La trivia puede repartirse en una experiencia por carro si existen las variables
+// EVIUS_TRIVIA_EXPERIENCE_ID_<CARRO> (KWID, KARDIAN, DUSTER, ARKANA, KOLEOS, FILANTE); si no, usa la unica.
+function experienceIdFor(cfg, r) {
+  if (r.kind === 'trivia') return cfg.triviaByCar[r.result] || cfg.experienceIds.trivia || '';
+  return cfg.experienceIds[r.kind] || '';
+}
+const missingVarFor = (r) => r.kind === 'trivia' ? `EVIUS_TRIVIA_EXPERIENCE_ID (o EVIUS_TRIVIA_EXPERIENCE_ID_${r.result.toUpperCase()})` : KINDS[r.kind].envId;
 
 const idempotencyKey = (path, ids) => `renault:${path}:${createHash('sha256').update([...ids].sort().join('\n')).digest('hex').slice(0, 32)}`;
 
@@ -93,6 +107,7 @@ export default async (request) => {
   const cfg = { url: (env.EVIUS_URL || '').replace(/\/+$/, ''), token: env.EVIUS_TOKEN || '', eventId: env.EVIUS_EVENT_ID || '',
     source: env.EVIUS_SOURCE || '', mode: (env.EVIUS_MODE || 'off').toLowerCase(),
     experienceIds: { puzzle: env.EVIUS_EXPERIENCE_ID || '', trivia: env.EVIUS_TRIVIA_EXPERIENCE_ID || '' },
+    triviaByCar: Object.fromEntries([...CARS].map(car => [car, env[`EVIUS_TRIVIA_EXPERIENCE_ID_${car.toUpperCase()}`] || ''])),
     score: Number.isFinite(perCompletion) ? Math.min(100, Math.max(0, perCompletion)) : 100 };
   let body;
   try { body = await request.json(); } catch { return json(400, { ok: false, error: 'JSON invalido' }); }
@@ -106,8 +121,7 @@ export default async (request) => {
   if (cfg.mode !== 'live') return json(200, { ok: true, mode: cfg.mode, skipped: true, sent: valid.map(r => r.id), rejected, errors: [] });
   if (!cfg.url || !cfg.token || !cfg.eventId || !cfg.source)
     return json(500, { ok: false, error: 'Faltan EVIUS_URL, EVIUS_TOKEN, EVIUS_EVENT_ID o EVIUS_SOURCE en el servidor' });
-  const kinds = [...new Set(valid.map(r => r.kind))];
-  const missing = kinds.filter(k => !cfg.experienceIds[k]).map(k => KINDS[k].envId);
+  const missing = [...new Set(valid.filter(r => !experienceIdFor(cfg, r)).map(missingVarFor))];
   if (missing.length) return json(500, { ok: false, error: `Falta ${missing.join(' y ')} en el servidor`, sent: [], rejected });
 
   const base = { eventId: cfg.eventId, source: cfg.source, sentAt: new Date().toISOString() };
@@ -117,12 +131,13 @@ export default async (request) => {
   const attendees = await post(cfg, 'attendees', { ...base, records: [...people.values()] }, idempotencyKey('attendees', people.keys()));
   if (attendees.unauthorized) return json(401, { ok: false, unauthorized: true, error: attendees.error, sent: [], rejected });
   if (!attendees.ok) return json(502, { ok: false, error: attendees.error, sent: [], rejected, errors: [attendees.error] });
-  // 2. Una llamada a /experiences por tipo (puzzle y trivia tienen experiencias distintas en Evius).
+  // 2. Una llamada a /experiences por experiencia Evius destino (puzzle, trivia, o trivia por carro).
   const sent = [], errors = [];
-  for (const kind of kinds) {
-    const group = valid.filter(r => r.kind === kind);
-    const result = await post(cfg, 'experiences', { ...base, experienceId: cfg.experienceIds[kind], records: group.map(r => experience(r, cfg.score)) },
-      idempotencyKey(`experiences:${kind}`, group.map(r => r.id)));
+  const groups = new Map();
+  for (const r of valid) { const id = experienceIdFor(cfg, r); if (!groups.has(id)) groups.set(id, []); groups.get(id).push(r); }
+  for (const [experienceId, group] of groups) {
+    const result = await post(cfg, 'experiences', { ...base, experienceId, records: group.map(r => experience(r, cfg.score)) },
+      idempotencyKey(`experiences:${experienceId}`, group.map(r => r.id)));
     if (result.unauthorized) return json(401, { ok: false, unauthorized: true, error: result.error, sent, rejected });
     if (result.ok) sent.push(...group.map(r => r.id)); else errors.push(result.error);
   }
