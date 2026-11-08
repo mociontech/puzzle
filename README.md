@@ -74,9 +74,10 @@ No hay un formulario de captura de datos personales ni persistencia de las respu
 
 ## Envío de datos a Evius (Datahub)
 
-Cada **puzzle completado** se envía a Evius para saber cuántas personas usaron el rompecabezas. La trivia todavía no envía nada (pendiente).
+Cada **puzzle completado** y cada **trivia terminada** se envían a Evius para saber cuántas personas usaron cada experiencia.
 
-- **Qué se envía:** al completar un puzzle (Modo A o B) se registra una participación con `score` (100 por defecto, `EVIUS_SCORE_PER_COMPLETION`), modelo elegido, modo, movimientos, duración y hora. Antes se registra el asistente.
+- **Puzzle:** al completar un puzzle (Modo A o B) se registra una participación en `EVIUS_EXPERIENCE_ID` con `score` (100 por defecto, `EVIUS_SCORE_PER_COMPLETION`), modelo elegido, modo, movimientos, duración y hora. Antes se registra el asistente.
+- **Trivia:** al llegar al resultado se registra UNA participación en `EVIUS_TRIVIA_EXPERIENCE_ID` (una sola experiencia para toda la trivia) con `score` 100 y el carro recomendado como dato: `result` (nombre comercial exacto), `resultId`, las cinco respuestas (`q1`…`q5` y `answers`), los puntos por carro y la duración. Para saber cuántas personas salieron con cada carro se filtra por `result`; no hacen falta seis experiencias.
 - **Persona anónima:** el puzzle no pide datos, así que cada sesión (desde que se toca PUZZLE hasta volver al inicio) se identifica con un correo sintético `anon-<sessionId>@puzzle-renault.local` y nombre "Participante anónimo". Evius deduplica asistentes por correo: `/attendees` cuenta personas y `/experiences` cuenta partidas. **Quien administra Evius debe aprobar este esquema antes de producción.**
 - **Cómo:** el navegador nunca habla con Evius ni conoce el token. `src/evius/tracker.js` guarda cada partida en una cola en `localStorage` y la envía en segundo plano a `netlify/functions/evius.mjs`, que valida, limpia y llama a `POST /attendees` y `POST /experiences` con `Idempotency-Key`. Si falla, reintenta con espera creciente (1, 2, 4, 8, 16, 30 min); un 401 (token vencido) deja de insistir y avisa en consola.
 - **Variables (solo servidor, Netlify > Environment variables):** ver `.env.example`. Solo se envía cuando `EVIUS_MODE=live`. En Netlify marcar como secreta únicamente `EVIUS_TOKEN`.

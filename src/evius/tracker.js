@@ -79,7 +79,20 @@ export function newSession() {
 /** Registra una partida de puzzle terminada. Se envia como score (100 por defecto) con el modelo, el modo y los movimientos. */
 export function trackPuzzleCompleted({ sessionId, model, mode, moves, startedAt }) {
   const at = new Date().toISOString();
-  const record = { id: uuid(), sessionId, at, startedAt: startedAt || null, model, mode, moves,
+  const record = { kind: 'puzzle', id: uuid(), sessionId, at, startedAt: startedAt || null, model, mode, moves,
+    durationMs: startedAt ? Math.max(0, Date.parse(at) - Date.parse(startedAt)) : null, test: IS_TEST };
+  enqueue(record);
+  return record;
+}
+
+/**
+ * Registra una trivia terminada: el carro recomendado (result = id del modelo, resultName = nombre comercial),
+ * las cinco respuestas (letras A-D) y los puntos por carro. Va a la experiencia EVIUS_TRIVIA_EXPERIENCE_ID.
+ */
+export function trackTriviaCompleted({ sessionId, car, answers, points, startedAt }) {
+  const at = new Date().toISOString();
+  const record = { kind: 'trivia', id: uuid(), sessionId, at, startedAt: startedAt || null,
+    result: car.id, resultName: car.name, answers: answers.map((i) => 'ABCD'[i]), points,
     durationMs: startedAt ? Math.max(0, Date.parse(at) - Date.parse(startedAt)) : null, test: IS_TEST };
   enqueue(record);
   return record;

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { CARS, QUESTIONS, getTriviaResult } from './triviaData';
+import { newSession, trackTriviaCompleted } from '../evius/tracker';
 import './trivia.css';
 
 const LETTERS = ['A', 'B', 'C', 'D'];
@@ -286,10 +287,28 @@ function Result({ car, onRestart, onExit }) {
 export default function Trivia({ onExit }) {
   const [step, setStep] = useState(-1); // -1: intro; 0..4: pregunta; 5: resultado
   const [answers, setAnswers] = useState([null, null, null, null, null]);
+  // Evius: una sesión por persona que abre la trivia; se envía UNA vez por trivia terminada.
+  const session = useRef(newSession());
+  const startedAt = useRef(null);
+  const reported = useRef(false);
+  const finished = step >= QUESTIONS.length;
+
+  useEffect(() => {
+    if (!finished || reported.current) return;
+    reported.current = true;
+    const { car, points } = getTriviaResult(answers);
+    trackTriviaCompleted({ sessionId: session.current.id, car, answers, points, startedAt: startedAt.current });
+  }, [finished, answers]);
 
   function restart() {
     setAnswers([null, null, null, null, null]);
+    reported.current = false;
+    startedAt.current = null;
     setStep(-1);
+  }
+  function start() {
+    startedAt.current = new Date().toISOString();
+    setStep(0);
   }
   function choose(choice) {
     setAnswers((current) => current.map((value, index) => index === step ? choice : value));
@@ -298,7 +317,7 @@ export default function Trivia({ onExit }) {
   function previous() {
     setStep((current) => Math.max(-1, current - 1));
   }
-  if (step === -1) return <Intro onStart={() => setStep(0)} onExit={onExit} />;
+  if (step === -1) return <Intro onStart={start} onExit={onExit} />;
   if (step < QUESTIONS.length) {
     return <Question index={step} answer={answers[step]} onChoose={choose}
       onPrevious={previous} onExit={onExit} />;

@@ -12,6 +12,8 @@
     "evius:off": "node scripts/test-evius-function.mjs",
     "evius:ping": "node scripts/test-evius-function.mjs --ping",
     "evius:live": "node scripts/test-evius-function.mjs --live",
+    "evius:trivia:off": "node scripts/test-evius-function.mjs --trivia",
+    "evius:trivia:live": "node scripts/test-evius-function.mjs --live --trivia",
     "functions": "npx netlify-cli functions:serve --port 9999"
   },
   "dependencies": {

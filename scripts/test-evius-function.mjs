@@ -5,6 +5,7 @@
 //   node scripts/test-evius-function.mjs --ping     -> POST /experiences con records: [] (confirma token, URL y eventId sin escribir)
 //   node scripts/test-evius-function.mjs --live     -> envia UNA partida marcada "PRUEBA borrar" a Evius
 //   node scripts/test-evius-function.mjs --live --id <uuid>  -> repite el mismo registro (prueba de idempotencia)
+//   agrega --trivia a cualquiera de los anteriores para probar un registro de TRIVIA en vez de puzzle
 import { readFileSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -46,10 +47,14 @@ const sessionId = process.env.TEST_SESSION_ID || '00000000-0000-4000-8000-000000
 
 const { default: handler } = await import(pathToFileURL(join(root, 'netlify', 'functions', 'evius.mjs')).href);
 const startedAt = new Date(Date.now() - 83000).toISOString();
-const record = { id, sessionId, at: new Date().toISOString(), startedAt, model: 'RENAULT ARKANA HYBRID E-TECH', mode: 'grid', moves: 37, durationMs: 83000, test: true };
+const trivia = process.argv.includes('--trivia');
+const record = trivia
+  ? { kind: 'trivia', id, sessionId, at: new Date().toISOString(), startedAt, result: 'kardian', resultName: 'RENAULT KARDIAN',
+      answers: ['B', 'A', 'A', 'A', 'A'], points: { kwid: 2, kardian: 3, duster: 0, arkana: 0, koleos: 0, filante: 0 }, durationMs: 83000, test: true }
+  : { kind: 'puzzle', id, sessionId, at: new Date().toISOString(), startedAt, model: 'RENAULT ARKANA HYBRID E-TECH', mode: 'grid', moves: 37, durationMs: 83000, test: true };
 const invalid = { id: 'no-es-un-id', sessionId, at: 'ayer', model: 'X', mode: 'otro', moves: 'nada' };
 
-console.log(`\nModo: ${process.env.EVIUS_MODE}   registro de prueba id=${id} sesion=${sessionId}`);
+console.log(`\nModo: ${process.env.EVIUS_MODE}   tipo: ${trivia ? 'trivia' : 'puzzle'}   registro de prueba id=${id} sesion=${sessionId}`);
 const response = await handler(new Request('http://localhost/.netlify/functions/evius', { method: 'POST',
   headers: { 'content-type': 'application/json' }, body: JSON.stringify({ records: [record, invalid] }) }));
 const body = await response.json();
@@ -57,5 +62,5 @@ console.log(`HTTP ${response.status}`);
 console.log(JSON.stringify(body, null, 2));
 const success = response.ok && body.ok && body.sent?.includes(id) && body.rejected?.includes('no-es-un-id');
 console.log(success ? '\nOK: el registro valido fue aceptado y el invalido descartado.' : '\nFALLO: revisa la respuesta.');
-if (success && live) console.log(`Registro PRUEBA en Evius: correo prueba-${sessionId}@puzzle-renault.local (borrarlo despues).`);
+if (success && live) console.log(`Registro PRUEBA en Evius: correo prueba-${sessionId}@${trivia ? 'trivia' : 'puzzle'}-renault.local (borrarlo despues).`);
 process.exit(success ? 0 : 1);
