@@ -1,9 +1,11 @@
+import { ArrowLeftIcon } from "./icons";
+
 export default function Header({ showBack = false, onBack }) {
   return (
     <header className="hdr">
       {showBack && (
         <button className="hdr-back" onClick={onBack} aria-label="Volver">
-          ⟵
+          <ArrowLeftIcon />
         </button>
       )}
       <img

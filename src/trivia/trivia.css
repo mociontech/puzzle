@@ -99,7 +99,35 @@
 .trv-outline{min-height:66px;border:2px solid #000;background:#fff;color:#000;font-size:14px;letter-spacing:.05em;font-weight:700;padding:0 24px;}
 .trv-outline:hover,.trv-outline:focus-visible{background:#f5f5f5;}
 .trv-original-link{display:inline-block;color:#444;font-size:12px;font-weight:700;text-underline-offset:4px;letter-spacing:.06em;margin-top:27px;}
+/* ===== Branding Figma "Rompecabezas Renault" (Trivia, nov 2026) ===== */
+.trv-icon-arrow{width:.9em;height:.9em;flex:none;}
+.trv-icon-arrow--sm{width:12px;height:12px;vertical-align:-1px;margin-left:4px;}
+.trv-menu{display:inline-flex;align-items:center;gap:8px;}
+.trv-menu .trv-icon-arrow{width:12px;height:12px;}
+.trv-cta .trv-icon-arrow{width:22px;height:22px;}
+/* Intro: texto oscuro, ayuda gris, panel de galería gris #D9D9D6 y fotos que llenan la tarjeta (el visor muestra la foto completa). */
+.trv-intro-content h1{font-size:clamp(40px,4.3vw,96px);white-space:nowrap;}
+.trv-intro-content p{color:#1d1d1b;}
+.trv-helper{color:#7a7a7a;}
+.trv-intro-visual{background:#d9d9d6;border-left:0;}
+.trv-gallery-photo{padding:12px 12px 0;}
+.trv-gallery-photo img{object-fit:cover;}
+.trv-gallery-zoom{right:20px;top:20px;width:34px;height:34px;opacity:1;}
+.trv-gallery-zoom svg{width:17px;height:17px;}
+/* Pregunta: logo Renault en contorno (blanco 50 %) arriba a la derecha del panel amarillo; opciones en gris. */
+.trv-geo{position:absolute;z-index:-1;right:0;top:0;width:44%;height:auto;aspect-ratio:343/545;background:url('/brand/logo-outline-question.svg') no-repeat right top/contain;opacity:1;filter:none;transform:none;}
+.trv-question-sidebar-note{font-size:12px;letter-spacing:.02em;}
+.trv-option{background:#d9d9d6;}
+.trv-option:hover,.trv-option:focus-visible,.trv-option--selected{background:#efdf00;border-color:#000;}
+.trv-option-arrow{width:16px;height:16px;}
+.trv-question-footer-icon{width:42px;height:auto;color:#1d1d1b;}
+/* Resultado: panel gris con el logo en contorno (blanco 22 %) detrás de la foto. */
+.trv-result-image{background:#d9d9d6 url('/brand/logo-outline-result.svg') no-repeat center/cover;border-right:0;}
+.trv-result-image-zoom svg{width:15px;height:15px;}
+/* Visor: fondo negro con el patrón de rombos Renault. */
+.trv-viewer-stage{background:#0b0b0b url('/brand/pattern.svg') no-repeat center/cover;}
 @media(max-width:1050px){
+ .trv-intro-content h1{font-size:clamp(44px,7.5vw,72px);}
  .trv-intro{grid-template-columns:1fr;}.trv-intro-content{padding:46px 40px;}
  .trv-intro-visual{min-height:0;height:540px;border-left:0;border-top:1px solid #e4e4e2;}
  .trv-gallery{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));}
@@ -111,6 +139,7 @@
  .trv-result{grid-template-columns:1fr;}.trv-result-image{min-height:0;height:min(58vh,620px);border-right:0;border-bottom:1px solid #e4e4e2;}.trv-result-info{padding:42px 40px;}
 }
 @media(max-width:600px){
+ .trv-intro-content h1{white-space:normal;}
  .trv-header{height:68px;padding:0 16px;}.trv-brand img{width:31px;height:39px;}.trv-brand span{font-size:8px;letter-spacing:.04em;}
  .trv-menu{font-size:10px;}.trv-nav-back{gap:4px;font-size:20px;}.trv-nav-back span{font-size:9px;}
  .trv-bottomline{padding:0 20px;font-size:9px;}

@@ -1,4 +1,5 @@
 import Header from "./Header";
+import { ArrowRightIcon } from "./icons";
 
 // Fotos oficiales del cliente (Box), recortadas a 16:9 para el tablero.
 // Los nombres comerciales son EXACTOS al correo del cliente.
@@ -17,7 +18,7 @@ export default function ScenarioSelect({ onPick, onBack }) {
       <div className="select-head">
         <span className="select-kicker"><span className="select-kicker-line" /> 02 / EXPLORA</span>
         <h2 className="title font-bold">SELECCIONA TU ROMPECABEZAS</h2>
-        <p className="select-sub">Cuatro modelos. Elige uno y arma cada pieza.</p>
+        <p className="select-sub">4 modelos, elige uno y arma cada pieza</p>
       </div>
 
       <div className="grid cols-4">
@@ -26,7 +27,7 @@ export default function ScenarioSelect({ onPick, onBack }) {
             <div className="thumb">
               <img src={it.img} alt={it.name} />
               <span className="card-index">{String(index + 1).padStart(2, "0")}</span>
-              <span className="arrow-overlay" aria-hidden>➜</span>
+              <span className="arrow-overlay" aria-hidden><ArrowRightIcon /></span>
             </div>
             <div className="caption">
               <div className="title font-regular">{it.name}</div>

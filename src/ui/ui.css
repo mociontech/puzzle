@@ -315,7 +315,7 @@ html, body {
 @media (max-width: 1024px){
   .grid.cols-3{ grid-template-columns: 1fr; }
 }
-@media (max-width: 1280px){
+@media (max-width: 1100px){
   .grid.cols-4{ grid-template-columns: repeat(2,1fr); }
 }
 @media (max-width: 640px){
@@ -417,5 +417,13 @@ html, body {
   height: 100% !important;   /* mantiene el aspect por viewBox */
 }
 
-
-
+/* ===== Branding Figma "Rompecabezas Renault" (Puzzle, nov 2026) ===== */
+/* Fondo negro con el patrón de rombos Renault en selección y tablero. */
+.select-screen, .game-wrap{ background:#000 url('/brand/pattern.svg') no-repeat center top / cover; }
+.hdr-back svg{ width:46%; height:auto; }
+.arrow-overlay svg{ width:52%; height:auto; }
+.select-sub{ color:#9aa1ac; }
+.pzl-card{ border-radius:24px; padding:28px 32px; }
+.pzl-card h2{ font-size:clamp(26px,2.1vw,40px); line-height:1.1; }
+/* El aviso "¡Completado!" del tablero original queda oculto: la tarjeta de completado ya lo comunica (Figma sin emoji). */
+.pzl-toolbar .ok{ display:none; }

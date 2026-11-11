@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { CARS, QUESTIONS, getTriviaResult } from './triviaData';
 import { newSession, trackTriviaCompleted } from '../evius/tracker';
+import { ArrowUpRightIcon, ChatIcon, SearchIcon } from '../ui/icons';
 import './trivia.css';
 
 const LETTERS = ['A', 'B', 'C', 'D'];
@@ -18,7 +19,7 @@ function TriviaHeader({ onExit, showBack, onBack }) {
         <img src="/images/logo-renault.png" alt="Renault" />
         <span>EXPERIENCIA RENAULT</span>
       </div>
-      <button className="trv-menu" onClick={onExit}>MENÚ <span aria-hidden="true">↗</span></button>
+      <button className="trv-menu" onClick={onExit}>MENÚ <ArrowUpRightIcon className="trv-icon-arrow" /></button>
     </header>
   );
 }
@@ -162,7 +163,7 @@ function CarViewer({ carKey, onClose, onNavigate }) {
 
       <footer className="trv-viewer-bottom">
         <div className="trv-viewer-name">
-          <span className="trv-kicker"><span className="trv-kicker-line" /> {car.profile.toUpperCase()}</span>
+          <span className="trv-kicker"><span className="trv-kicker-line" /> {(car.tagline || car.profile).toUpperCase()}</span>
           <strong>{car.name}</strong>
         </div>
         <div className="trv-viewer-zoom" aria-label="Zoom">
@@ -185,21 +186,21 @@ function Intro({ onStart, onExit }) {
       <main className="trv-intro">
         <section className="trv-intro-content">
           <div className="trv-kicker"><span className="trv-kicker-line" /> DESCUBRE TU ESTILO</div>
-          <h1>¿QUÉ RENAULT<br />VA CONTIGO<span>?</span></h1>
-          <p>Hay un Renault para cada forma de vivir. Responde cinco preguntas y descubre cuál se parece más a ti.</p>
+          <h1>¿CUÁL RENAULT<br />VA CONTIGO<span>?</span></h1>
+          <p>hay un Renault para cada forma de vivir, responde<br />5 preguntas y descubre cuál se parece más a ti</p>
           <div className="trv-metrics"><span><strong>05</strong> PREGUNTAS</span><span><strong>06</strong> VEHÍCULOS</span><span><strong>01</strong> RESULTADO</span></div>
-          <button className="trv-cta" onClick={onStart}>COMENZAR TRIVIA <span aria-hidden="true">↗</span></button>
-          <div className="trv-helper">Sin respuestas correctas o incorrectas. Solo tu personalidad.</div>
+          <button className="trv-cta" onClick={onStart}>COMENZAR TRIVIA <ArrowUpRightIcon className="trv-icon-arrow" /></button>
+          <div className="trv-helper">responde de acuerdo a tu personalidad</div>
         </section>
         <section className="trv-intro-visual" aria-label="Vehículos Renault">
-          <div className="trv-gallery-head"><span>SEIS VEHÍCULOS</span><span>TOCA UNA FOTO PARA VERLA COMPLETA</span></div>
+          <div className="trv-gallery-head"><span>SEIS VEHÍCULOS</span><span>TOCA CADA FOTO PARA VER LOS DETALLES</span></div>
           <div className="trv-gallery">
             {CAR_ORDER.map((key, index) => (
               <button type="button" className={`trv-gallery-card trv-gallery-card--${index}`} key={key}
                 onClick={() => setViewer(key)} aria-label={`Ver foto de ${CARS[key].name}`}>
                 <div className="trv-gallery-photo">
                   <img src={CARS[key].image} alt="" />
-                  <i className="trv-gallery-zoom" aria-hidden="true">⊕</i>
+                  <i className="trv-gallery-zoom" aria-hidden="true"><SearchIcon /></i>
                 </div>
                 <span className="trv-gallery-label">{CARS[key].name}</span>
               </button>
@@ -207,7 +208,7 @@ function Intro({ onStart, onExit }) {
           </div>
         </section>
       </main>
-      <div className="trv-bottomline"><span>RENAULT</span><span>¿QUÉ RENAULT VA CON TU ESTILO?</span></div>
+      <div className="trv-bottomline"><span>RENAULT</span><span>¿CUÁL RENAULT VA CON TU ESTILO?</span></div>
       {viewer && <CarViewer carKey={viewer} onClose={() => setViewer(null)} onNavigate={navigate} />}
     </div>
   );
@@ -222,13 +223,13 @@ function Question({ index, answer, onChoose, onPrevious, onExit }) {
         <aside className="trv-question-left">
           <div className="trv-kicker"><span className="trv-kicker-line" /> ENCUENTRA TU RENAULT</div>
           <div className="trv-question-count"><strong>{String(index + 1).padStart(2, '0')}</strong><span>/ 05</span></div>
-          <h1>ELIGE LO QUE<br />MÁS VA <em>CONTIGO.</em></h1>
+          <h1>ELIGE LO QUE<br />MÁS VA CONTIGO</h1>
           <div className="trv-progress" aria-label={`Pregunta ${index + 1} de 5`}>
             {QUESTIONS.map((_, i) => <span className={i <= index ? 'active' : ''} key={i} />)}
           </div>
-          <div className="trv-question-sidebar-note">NO HAY RESPUESTAS EQUIVOCADAS.<br />SIGUE TU INSTINTO.</div>
+          <div className="trv-question-sidebar-note">responde de acuerdo a tu personalidad</div>
           {/* Logo Renault original como marca de agua */}
-          <img className="trv-geo" src="/images/logo-renault.png" alt="" aria-hidden="true" />
+          <span className="trv-geo" aria-hidden="true" />
         </aside>
         <section className="trv-question-panel">
           <div className="trv-question-overline">PREGUNTA {String(index + 1).padStart(2, '0')} <span>DE 05</span></div>
@@ -239,11 +240,11 @@ function Question({ index, answer, onChoose, onPrevious, onExit }) {
                 onClick={() => onChoose(i)} key={`${index}-${i}`}>
                 <span className="trv-option-letter">{LETTERS[i]}</span>
                 <span className="trv-option-label">{option.text}</span>
-                <span className="trv-option-arrow" aria-hidden="true">↗</span>
+                <ArrowUpRightIcon className="trv-option-arrow" />
               </button>
             ))}
           </div>
-          <div className="trv-question-footer">TOCA UNA RESPUESTA PARA CONTINUAR <span>✳</span></div>
+          <div className="trv-question-footer">TOCA UNA RESPUESTA PARA CONTINUAR <ChatIcon className="trv-question-footer-icon" /></div>
         </section>
       </main>
       <div className="trv-bottomline"><span>RENAULT</span><span>DESCUBRE TU ESTILO</span></div>
@@ -260,21 +261,21 @@ function Result({ car, onRestart, onExit }) {
         <button type="button" className="trv-result-image" onClick={() => setViewer(true)} aria-label={`Ver foto completa de ${car.name}`}>
           <img src={car.image} alt="" />
           <span className="trv-result-image-label">TU RENAULT IDEAL / 01</span>
-          <span className="trv-result-image-zoom"><i aria-hidden="true">⊕</i> VER CON ZOOM</span>
+          <span className="trv-result-image-zoom"><SearchIcon /> VER CON ZOOM</span>
         </button>
         <section className="trv-result-info">
           <div className="trv-kicker"><span className="trv-kicker-line" /> EL RESULTADO ESTÁ AQUÍ</div>
           <span className="trv-result-overline">TU RENAULT IDEAL ES…</span>
           <h1>{car.name}</h1>
-          <span className="trv-result-profile">{car.profile.toUpperCase()}</span>
+          <span className="trv-result-profile">{(car.tagline || car.profile).toUpperCase()}</span>
           <h2>{car.motto}</h2>
           <p>{car.description}</p>
           <div className="trv-result-actions">
-            <button className="trv-cta" onClick={onRestart}>VOLVER A JUGAR <span aria-hidden="true">↗</span></button>
+            <button className="trv-cta" onClick={onRestart}>VOLVER A JUGAR <ArrowUpRightIcon className="trv-icon-arrow" /></button>
             <button className="trv-outline" onClick={onExit}>MENÚ PRINCIPAL</button>
           </div>
           <a className="trv-original-link" href={car.boxUrl} target="_blank" rel="noopener noreferrer">
-            VER IMAGEN DEL VEHÍCULO ↗
+            VER IMAGEN DEL VEHÍCULO <ArrowUpRightIcon className="trv-icon-arrow trv-icon-arrow--sm" />
           </a>
         </section>
       </main>
