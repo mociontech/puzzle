@@ -26,7 +26,7 @@
 .experience-choice__description { font-size:clamp(13px,1.05vw,20px); margin-top:clamp(14px,2vh,24px); line-height:1.45; min-height:3em;max-width:320px; }
 .experience-choice__arrow { position:absolute; top:clamp(22px,2.2vw,42px);right:clamp(22px,2.2vw,42px);width:clamp(20px,1.6vw,30px);height:auto; }
 .experience-home__bottom { display:flex;align-items:center;justify-content:space-between;padding:clamp(14px,2vh,26px) clamp(28px,4vw,78px);font-size:clamp(9px,.9vw,17px);font-weight:700;letter-spacing:.14em;background:#f7f7f6;border-top:1px solid #e2e2e2; }
-@media (max-width:1100px){
+@media (orientation:portrait),(max-width:760px){
  .experience-home__main {grid-template-columns:1fr;gap:24px;align-items:stretch;}
  .experience-home__intro h1 {font-size:clamp(52px,7.7vw,86px);margin:20px 0 16px;}
  .experience-home__intro p {margin:16px 0 4px;}

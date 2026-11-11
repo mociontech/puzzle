@@ -73,7 +73,7 @@ export default function App() {
   return (
     <div className="game-wrap">
       <Header showBack onBack={() => { setScreen('select'); setLastMoves(null); }} />
-      <div style={{ display: 'flex', justifyContent: 'center', gap: 12, margin: '4px 0 12px' }}>
+      <div className="pzl-modes">
         <button className={`btn ${mode === 'grid' ? 'btn-primary' : 'btn-ghost'}`}
           onClick={() => { setMode('grid'); startPlay(); }}>Modo A: Cuadrícula</button>
         <button className={`btn ${mode === 'jigsaw' ? 'btn-primary' : 'btn-ghost'}`}

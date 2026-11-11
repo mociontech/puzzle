@@ -126,17 +126,18 @@
 .trv-result-image-zoom svg{width:15px;height:15px;}
 /* Visor: fondo negro con el patrón de rombos Renault. */
 .trv-viewer-stage{background:#0b0b0b url('/brand/pattern.svg') no-repeat center/cover;}
-@media(max-width:1050px){
+/* Una columna solo en vertical (iPad parado) o pantallas angostas; el iPad horizontal (1024–1366) mantiene dos columnas. */
+@media (orientation:portrait),(max-width:760px){
  .trv-intro-content h1{font-size:clamp(44px,7.5vw,72px);}
  .trv-intro{grid-template-columns:1fr;}.trv-intro-content{padding:46px 40px;}
- .trv-intro-visual{min-height:0;height:540px;border-left:0;border-top:1px solid #e4e4e2;}
+ .trv-intro-visual{min-height:0;height:min(40vh,480px);border-left:0;border-top:1px solid #e4e4e2;}
  .trv-gallery{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));}
  .trv-question-shell{grid-template-columns:1fr;}.trv-question-left{min-height:0;padding:28px 40px;}
  .trv-question-count{margin-top:20px;}.trv-question-count strong{font-size:90px;}
  .trv-question-left h1{margin:6px 0 20px;font-size:35px;}.trv-progress{margin-top:8px;}
  .trv-question-sidebar-note{display:none;}.trv-geo{right:-6%;top:-10%;width:280px;}
  .trv-question-panel{padding:36px 40px;}.trv-option{min-height:75px;}
- .trv-result{grid-template-columns:1fr;}.trv-result-image{min-height:0;height:min(58vh,620px);border-right:0;border-bottom:1px solid #e4e4e2;}.trv-result-info{padding:42px 40px;}
+ .trv-result{grid-template-columns:1fr;}.trv-result-image{min-height:0;height:min(42vh,520px);border-right:0;border-bottom:1px solid #e4e4e2;}.trv-result-info{padding:42px 40px;}
 }
 @media(max-width:600px){
  .trv-intro-content h1{white-space:normal;}
@@ -157,3 +158,22 @@
  .trv-result-actions{flex-direction:column;}.trv-cta,.trv-outline{min-height:58px;}
 }
 @media(prefers-reduced-motion:reduce){.trv-option,.trv-cta{transition:none;}}
+
+/* iPad horizontal bajo (1024×768, 1080×810): compacta márgenes para que pregunta y resultado quepan sin scroll. */
+@media (orientation:landscape) and (max-height:860px){
+ .trv-question-panel{padding-top:16px;padding-bottom:16px;}
+ .trv-question-panel h2{margin:14px 0 clamp(16px,3vh,40px);}
+ .trv-question-footer{margin-top:18px;}
+ .trv-result-info{padding-top:20px;padding-bottom:20px;}
+ .trv-result-overline{margin:clamp(14px,3vh,40px) 0 10px;}
+ .trv-result-info h1{margin-bottom:14px;}
+ .trv-result-info h2{margin:18px 0 10px;}
+ .trv-result-info p{margin-bottom:22px;}
+ .trv-cta,.trv-outline{min-height:58px;}
+ .trv-original-link{margin-top:16px;}
+}
+/* iPad vertical: el resultado cabe completo en pantalla. */
+@media (orientation:portrait) and (min-width:601px){
+ .trv-result-info{padding-top:28px;padding-bottom:24px;}
+ .trv-result-overline{margin-top:24px;}
+}
